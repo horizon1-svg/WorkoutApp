@@ -497,6 +497,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> with WidgetsB
   Widget _smallAction(String label, VoidCallback onTap) => OutlinedButton(onPressed: onTap, style: OutlinedButton.styleFrom(foregroundColor: text, side: const BorderSide(color: line), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), padding: const EdgeInsets.symmetric(vertical: 14)), child: Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11)));
 
 
+}
 class RepsDialog extends StatefulWidget{final int target;const RepsDialog({super.key,required this.target});@override State<RepsDialog> createState()=>_RepsDialogState();}
 class _RepsDialogState extends State<RepsDialog>{late TextEditingController c;@override void initState(){super.initState();c=TextEditingController(text:widget.target==0?'':'${widget.target}');}@override Widget build(BuildContext context)=>AlertDialog(backgroundColor:surface,title:const Text('SET COMPLETE'),content:TextField(controller:c,keyboardType:TextInputType.number,autofocus:true,decoration:const InputDecoration(labelText:'Actual reps')),actions:[FilledButton(onPressed:()=>Navigator.pop(context,int.tryParse(c.text)),child:const Text('CONFIRM'))]);@override void dispose(){c.dispose();super.dispose();}}
 
