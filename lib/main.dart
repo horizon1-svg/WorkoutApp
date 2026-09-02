@@ -624,7 +624,7 @@ class _SettingRow extends StatelessWidget {
     decoration: BoxDecoration(color: panel, borderRadius: BorderRadius.circular(16), border: Border.all(color: line)),
     child: Row(children: [
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)), const SizedBox(height: 5), Text(subtitle, style: const TextStyle(color: muted, fontSize: 11, height: 1.3))])),
-      Switch(value: value, activeThumbColor: Colors.white, activeTrackColor: brightRed, onChanged: onChanged),
+      Switch(value: value, thumbColor: const WidgetStatePropertyAll(Colors.white), trackColor: const WidgetStatePropertyAll(brightRed), onChanged: onChanged),
     ]),
   );
 }
@@ -632,7 +632,111 @@ class _SettingRow extends StatelessWidget {
 class RestScreen extends StatefulWidget{const RestScreen({super.key});@override State<RestScreen> createState()=>_RestScreenState();}
 class _RestScreenState extends State<RestScreen>{int remaining=180;Timer?timer;@override void initState(){super.initState();timer=Timer.periodic(const Duration(seconds:1),(_){if(!mounted)return;if(remaining>0)setState(()=>remaining--);});}void add(int s)=>setState(()=>remaining+=s);@override void dispose(){timer?.cancel();super.dispose();}@override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('REST'),backgroundColor:Colors.transparent),body:Padding(padding:const EdgeInsets.all(22),child:Column(children:[const Spacer(),const Text('REST',style:TextStyle(color:muted,fontWeight:FontWeight.w900,letterSpacing:2)),const SizedBox(height:16),Text(fmt(remaining),style:const TextStyle(fontSize:72,fontWeight:FontWeight.w900)),const SizedBox(height:24),Row(mainAxisAlignment:MainAxisAlignment.center,children:[TextButton(onPressed:()=>add(30),child:const Text('+30 SEC')),TextButton(onPressed:()=>add(60),child:const Text('+1 MIN'))]),TextButton(onPressed:()=>setState(()=>remaining=180),child:const Text('RESET TO 03:00')),const Spacer(),SizedBox(width:double.infinity,height:54,child:FilledButton(onPressed:(){timer?.cancel();Navigator.pop(context,false);},child:const Text('DONE'))),TextButton(onPressed:(){timer?.cancel();Navigator.pop(context,true);},child:const Text('SKIP REST'))])));}
 
-class CompleteScreen extends StatelessWidget{final String workoutName;final int duration,exercises,sets,totalSets,skipped;const CompleteScreen({super.key,required this.workoutName,required this.duration,required this.exercises,required this.sets,required this.totalSets,required this.skipped});@override Widget build(BuildContext context)=>Scaffold(body:SafeArea(child:Padding(padding:const EdgeInsets.all(28),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[const Spacer(),const Text('WORKOUT',textAlign:TextAlign.center,style:TextStyle(color:muted,fontWeight:FontWeight.w800,letterSpacing:3)),const Text('COMPLETE',textAlign:TextAlign.center,style:TextStyle(fontSize:44,fontWeight:FontWeight.w900)),const SizedBox(height:36),Text(workoutName,textAlign:TextAlign.center,style:const TextStyle(fontSize:22,fontWeight:FontWeight.w800)),const SizedBox(height:10),Text(fmt(duration),textAlign:TextAlign.center,style:const TextStyle(fontSize:34,fontWeight:FontWeight.w900)),const SizedBox(height:26),Text('$sets / $totalSets SETS',textAlign:TextAlign.center,style:const TextStyle(fontWeight:FontWeight.w800)),Text('$exercises EXERCISES  ·  $skipped SKIPPED',textAlign:TextAlign.center,style:const TextStyle(color:muted)),const Spacer(),SizedBox(height:56,child:FilledButton(onPressed:()async{AppStore.history.insert(0,SessionRecord(date:AppStore.dayKey(DateTime.now()),workout:workoutName,duration:duration,exercises:exercises,sets:sets,skipped:skipped));await AppStore.save();if(context.mounted)Navigator.popUntil(context,(r)=>r.isFirst);},child:const Text('FINISH'))])));}
+class CompleteScreen extends StatelessWidget {
+  final String workoutName;
+  final int duration;
+  final int exercises;
+  final int sets;
+  final int totalSets;
+  final int skipped;
+
+  const CompleteScreen({
+    super.key,
+    required this.workoutName,
+    required this.duration,
+    required this.exercises,
+    required this.sets,
+    required this.totalSets,
+    required this.skipped,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Spacer(),
+              const Text(
+                'WORKOUT',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: muted,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 3,
+                ),
+              ),
+              const Text(
+                'COMPLETE',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 44,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 36),
+              Text(
+                workoutName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                fmt(duration),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 26),
+              Text(
+                '$sets / $totalSets SETS',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              Text(
+                '$exercises EXERCISES  ·  $skipped SKIPPED',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: muted),
+              ),
+              const Spacer(),
+              SizedBox(
+                height: 56,
+                child: FilledButton(
+                  onPressed: () async {
+                    AppStore.history.insert(
+                      0,
+                      SessionRecord(
+                        date: AppStore.dayKey(DateTime.now()),
+                        workout: workoutName,
+                        duration: duration,
+                        exercises: exercises,
+                        sets: sets,
+                        skipped: skipped,
+                      ),
+                    );
+                    await AppStore.save();
+                    if (context.mounted) {
+                      Navigator.popUntil(context, (r) => r.isFirst);
+                    }
+                  },
+                  child: const Text('FINISH'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class RestDayScreen extends StatelessWidget{const RestDayScreen({super.key});@override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(backgroundColor:Colors.transparent),body:SafeArea(child:Padding(padding:const EdgeInsets.all(28),child:Column(children:[const Spacer(),const Text('REST DAY',style:TextStyle(fontSize:42,fontWeight:FontWeight.w900)),const SizedBox(height:12),const Text('Recovery is part of training.',style:TextStyle(color:muted,fontSize:17)),const SizedBox(height:24),Text('🔥 Streak: ${AppStore.streak} days',style:const TextStyle(fontWeight:FontWeight.w800)),const Spacer(),SizedBox(width:double.infinity,height:56,child:FilledButton(onPressed:()async{AppStore.restDays.add(AppStore.dayKey(DateTime.now()));await AppStore.save();if(context.mounted)Navigator.pop(context);},child:const Text('COMPLETE REST DAY')))])));}
 
