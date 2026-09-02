@@ -488,7 +488,78 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> with WidgetsB
               _progress(setProgress),
             ],
           ])),
-          Container(padding: const EdgeInsets.fromLTRB(22, 12, 22, 16), decoration: BoxDecoration(color: const Color(0xFF10100F), border: Border(top: BorderSide(color: line))), child: phase == 'rest' ? Column(children: [SizedBox(width: double.infinity, height: 54, child: FilledButton(onPressed: () { timer?.cancel(); setState(() { phase = 'set'; remaining = targetSeconds; }); _save(); _startPhase(); }, child: const Text('SKIP REST'))), const SizedBox(height: 7), TextButton(onPressed: () { timer?.cancel(); setState(() { phase = 'set'; remaining = targetSeconds; }); _save(); _startPhase(); }, child: const Text('START SET NOW'))]) : timeUp ? const SizedBox.shrink() : Column(children: [SizedBox(width: double.infinity, height: 56, child: FilledButton(onPressed: completeSet, child: Text(exercise.mode == ExerciseMode.time ? 'COMPLETE SET' : 'COMPLETE SET'))), const SizedBox(height: 2), Row(children: [Expanded(child: TextButton(onPressed: skipSet, child: const Text('SKIP SET'))), Expanded(child: TextButton(onPressed: skipExercise, child: const Text('SKIP EXERCISE')))])]))),
+          Container(
+  padding: const EdgeInsets.fromLTRB(22, 12, 22, 16),
+  decoration: BoxDecoration(
+    color: const Color(0xFF10100F),
+    border: Border(top: BorderSide(color: line)),
+  ),
+  child: phase == 'rest'
+      ? Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: FilledButton(
+                onPressed: () {
+                  timer?.cancel();
+                  setState(() {
+                    phase = 'set';
+                    remaining = targetSeconds;
+                  });
+                  _save();
+                  _startPhase();
+                },
+                child: const Text('SKIP REST'),
+              ),
+            ),
+            const SizedBox(height: 7),
+            TextButton(
+              onPressed: () {
+                timer?.cancel();
+                setState(() {
+                  phase = 'set';
+                  remaining = targetSeconds;
+                });
+                _save();
+                _startPhase();
+              },
+              child: const Text('START SET NOW'),
+            ),
+          ],
+        )
+      : timeUp
+          ? const SizedBox.shrink()
+          : Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: FilledButton(
+                    onPressed: completeSet,
+                    child: const Text('COMPLETE SET'),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: skipSet,
+                        child: const Text('SKIP SET'),
+                      ),
+                    ),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: skipExercise,
+                        child: const Text('SKIP EXERCISE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+),
         ])),
       ),
     );
